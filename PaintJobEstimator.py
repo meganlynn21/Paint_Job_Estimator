@@ -1,22 +1,16 @@
 # Paint Job Estimator
 # Megan Keyes
-# A painting company has determined that for every 112 square feet of wall space,
-# one gallon of paint and eight hours of labor will be required. The company
-# charges $35 dollars per hour for labor. Write a program that asks the
-# user to enter the square feet of wall space to be painted and the price
-# per gallon.
 
 import math
 
 def main():
-    # Get user input
+  # Get user input
   fWall_Sq_Feet = getFloatInput("Enter wall space in square feet: ")
   fPrice_PerGallon = getFloatInput("Enter paint price per gallon: ")
   fFeet_PerGallon = getFloatInput("Enter feet per gallon: ")
   fLabor_Hours_PerGallon = getFloatInput("How many labor hours per gallon: ")
   fLaborCharge = getFloatInput("Labor charge per hour: ")
   sState = str(input("State job is in: "))
-  sLastName = str(input("Customer Last Name: "))
 
 # Call Functions
 
@@ -33,40 +27,46 @@ def main():
   fPaintCost = getPaintCost(iGetPaint, fPrice_PerGallon)
 
 # State Tax
-  fState = getSalesTax(sState)
+  fState = getSalesTax(sState, fLaborCost, fPaintCost, iGetPaint)
 
 # Cost estimate
-  fCost = showCostEstimate(fLaborCost, fPaintCost, fState)
+  fCost = showCostEstimate(fLaborCost, fPaintCost, fState, iGetPaint, fLabor)
+  fTotalCostFormatted = "{:,.2f}".format(fCost)
+  print("Total cost: $", fTotalCostFormatted, sep = "")
 
-# Need to get number of gallons of paint
-# Return a int and receives 2 floats
+
+# Get number of gallons of paint
+# Returns a int and receives 2 floats
 def getGallonsOfpaint(fTotalSquareFeet, fFeetPerGallon):
     iGallonsNeeded = math.ceil(fTotalSquareFeet/fFeetPerGallon)
     return iGallonsNeeded
 
 # Returns the labor hours to paint the wall as a float
-def getLaborHours(fLaborHoursPerGallon, fTotalGallons):
-    return fLaborHoursPerGallon * fTotalGallons
+def getLaborHours(fLabor_Hours_PerGallon, iGallonsNeeded):
+    return fLabor_Hours_PerGallon * iGallonsNeeded
 
 # Returns the labor cost to paint the wall as a float
-def getLaborCost(LaborHoursPerGallon, fLaborCharge):
-    return LaborHoursPerGallon * fLaborCharge
+def getLaborCost(Labor_Hours_PerGallon, fLaborCharge):
+    return Labor_Hours_PerGallon * fLaborCharge
 
 # Returns the paint cost to paint the wall as a float
-def getPaintCost(iGallonsNeeded, fPaintCost):
-    return iGallonsNeeded * fPaintCost
+def getPaintCost(iGallonsNeeded, fPrice_PerGallon):
+    return iGallonsNeeded * fPrice_PerGallon
 
-# Show cost estimate function
-def showCostEstimate(fLaborCost, fPaintCost, fState):
+# Takes in all the calculated values and outputs the values to the screen 
+def showCostEstimate(fLaborCost, fPaintCost, fState, iGetPaint, fLabor):
     print("Gallons of paint: ", iGetPaint)
-    print("Hours of labor: ", format(fLabor, ".1f"))
-    print("Paint charges: ", format(fPaintCost, ".2f"))
-    print("Labor charges: ", format(fLaborCost, ".2f"))
-    print("Tax: ", format(fState, ".2f"))
-    print("Total cost: ", format(fCost, ".2f"))
-    return fLaborCost + fPaintCost * fState
+    print("Hours of labor: ", format(fLabor, ".1f")) 
+    fPaintCostFormatted = "{:.2f}".format(fPaintCost)
+    print("Paint charges: $", fPaintCostFormatted, sep = "")
+    fTotalLaborCharges = fLaborCost * iGetPaint
+    fTotalLaborChargesFormatted = "{:,.2f}".format(fTotalLaborCharges)
+    print("Labor charges: $", fTotalLaborChargesFormatted, sep = "")
+    fStateTaxFormatted = "{:.2f}".format(fState)
+    print("Tax: $", fStateTaxFormatted, sep = "")
+    return (fLaborCost * iGetPaint) + fPaintCost + fState
 
-# Function for float input
+# Data validation
 def getFloatInput(sPromptMessage):
     fInput = 0
     while fInput <= 0:
@@ -76,9 +76,10 @@ def getFloatInput(sPromptMessage):
             print("Input must be a number.")
     return fInput
 
-# State function
+# Function that returns the tax rate for each state
 
-def getSalesTax(sState):
+def getSalesTax(sState, fLaborCost, fPaintCost, iGetPaint):
+    fTaxRate = 0
     if sState == "CT":
          fTaxRate = .06
     elif sState == "MA":
@@ -93,8 +94,7 @@ def getSalesTax(sState):
          fTaxRate = .06
     else:
         print("Not a valid input")
-
-    return fTaxRate
+    return (fLaborCost * iGetPaint + fPaintCost) * fTaxRate
 
 
 main()   
