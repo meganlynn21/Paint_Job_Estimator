@@ -1,5 +1,5 @@
 # Paint Job Estimator
-# Megan Keyes
+
 
 import math
 
